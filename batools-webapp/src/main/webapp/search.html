@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<link href="css/metro-bootstrap.css" rel="stylesheet">
+<link href="css/metro-bootstrap-responsive.css" rel="stylesheet">
+<link href="css/iconFont.css" rel="stylesheet">
+<link href="css/docs.css" rel="stylesheet">
+<link href="js/prettify/prettify.css" rel="stylesheet">
+
+<!-- Load JavaScript Libraries -->
+<script src="js/jquery/jquery.min.js"></script>
+<script src="js/jquery/jquery.widget.min.js"></script>
+<script src="js/jquery/jquery.mousewheel.js"></script>
+<script src="js/prettify/prettify.js"></script>
+
+<!-- Metro UI CSS JavaScript plugins -->
+<script src="js/load-metro.js"></script>
+
+<style>
+.abody {margin
+	
+}
+</style>
+<script>
+	var currentFilePath = "";
+	var currentRevision = "";
+
+	function getUrlParam(name) {
+		var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+		var r = window.location.search.substr(1).match(reg);
+		if (r != null)
+			return decodeURI(r[2]);
+		return null;
+	}
+
+	function runDialog() {
+		$
+				.Dialog({
+					overlay : true,
+					shadow : true,
+					flat : true,
+					icon : '<img src="images/184.png">',
+					title : 'SVN鉴权',
+					width : 400,
+					height : 200,
+					content : '',
+					onShow : function(_dialog) {
+						var content = _dialog.children('.content');
+						content
+								.html( '<div style="margin-left:10px;margin-right:10px"><label>SVN用户名</label>'
+										+ '<div class="input-control text"><input type="text" name="login" id="username"><button class="btn-clear"></button></div>'
+										+ '<label>SVN密码</label>'
+										+ '<div class="input-control password"><input type="password" name="password" id="userpwd"><button class="btn-reveal"></button></div>'
+										
+										+ '<button class="button primary" onclick="javascript:login();">下载</button>&nbsp;'
+										+ '<button class="button" type="button" onclick="$.Dialog.close()">Cancel</button></div>');
+					}
+				});
+	}
+
+	function doSearch(keyword) {
+
+		var keyword = $("#kw").val();
+
+		$
+				.ajax({
+					type : "post",
+					url : "search.do?method=asynsearch",
+					data : "keyword=" + keyword,
+					cache : false,
+					dataType : 'json',
+					success : function(data) {
+						$("#loading").hide();
+						var reslst = data.resultList;
+
+						var rslt = $("#search-result");
+
+						rslt.empty();
+
+						$.each(
+										reslst,
+										function(i) {
+											var reg1 = /\[#hl\]/g;
+											var reg2 = /\[\/#hl\]/g;
+
+											var desp = reslst[i].description
+													.replace(reg1,
+															"<font color='red'>");
+											desp = desp
+													.replace(reg2, "</font>");
+
+											rslt
+													.append("<a class='list' href='#'>"
+															+ "<div class='list-content'>"
+															+ "<span class='list-title' revision='"+reslst[i].revision+"'>"
+															+ reslst[i].filePath
+															+ "</span><span class='list-subtitle'>Author:"
+															+ reslst[i].author
+															+ "&nbsp;&nbsp;Date:"
+															+ reslst[i].date
+															+ "&nbsp;&nbsp;Revision:"
+															+ reslst[i].revision
+															+ "</span><span class='list-remark'>"
+															+ desp
+															+ "</span>"
+															+ "</div></a>");
+
+										});
+
+						$("#search-result a").click(
+								function(e) {
+
+									currentFilePath = encodeURI($(this)
+											.children("div").children("span")
+											.html());
+									currentRevision = $(this).children("div")
+											.children("span").attr("revision");
+									runDialog();
+								});
+					}
+				});
+	}
+
+	function login() { //函数 login();
+		var username = $("#username").val();
+		var password = $("#userpwd").val();
+		if (username == "" || password == "") {
+			alert("Please enter your SVN username and password!");
+			return false;
+		}
+		var filename = currentFilePath;
+		var revision = currentRevision;
+		$
+				.ajax({
+					type : "post",
+					url : "search.do?method=validation",
+					dataType : 'json',// json
+					data : 'username=' + username + '&password=' + password, // 校验svn用户
+					success : function(data) { //校验成功
+						//alert(json.username+'\n'+json.password); //
+						if (!data) {
+							alert("The username and password you typed is not correct!");
+							return false;
+						} else {
+							$.Dialog.close();
+							if (confirm("Validation Successful,download now?")) {
+								$("#fileDownFrame")
+										.attr(
+												"src",
+												"search.do?method=download&filename="
+														+ filename + "&rev="
+														+ revision);
+							}
+						}
+					}
+
+				});
+	}
+
+	$(function() {
+
+		var keyw = getUrlParam('kw');
+		$("#kw").val(keyw);
+		$("#loading").show();
+		doSearch(keyw);
+
+	});
+</script>
+
+<title>BA-Tools</title>
+</head>
+<body class="metro">
+
+	<div class="container">
+		<h1>
+
+			BA-Tools &nbsp;<small class="on-right">DR.CRM</small>
+		</h1>
+		<div class="input-control text span3 nbm" data-role="input-control">
+			<input type="text" placeholder="请输入关键字" id="kw">
+			<button class="btn-clear" tabindex="-1" type="button"></button>
+		</div>
+
+
+		<button class="large primary" onclick="javascript:doSearch();">Search</button>
+
+
+		<hr />
+		<div id="loading">
+			<i class="icon-loading "></i>Loading...
+
+		</div>
+		<div class="listview-outlook" data-role="listview" id="search-result">
+
+		</div>
+	</div>
+	<iframe id="fileDownFrame" src=""
+		style="display: none; visibility: hidden;"></iframe>
+</body>
+</html>

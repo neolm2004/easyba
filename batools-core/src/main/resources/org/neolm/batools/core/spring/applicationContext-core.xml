@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  ">
+
+	<bean
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="locations">
+			<list>
+				<value>classpath:lucene.properties</value>
+				<value>classpath:repository.properties</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- 仓库工厂 -->
+	<bean id="repository" class="org.neolm.batools.core.repository.RepositoryFactory"
+		factory-method="createInstance">
+		<constructor-arg>
+			<value>${repository.type}</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>${repository.url}</value>
+		</constructor-arg>
+	</bean>
+
+	<!-- 配置Lucene -->
+
+	<!-- 配置Lucene分析器 -->
+	<bean id="luceneAnalyzer" class="org.apache.lucene.analysis.standard.StandardAnalyzer">
+		<constructor-arg>
+			<value type="org.apache.lucene.util.Version">${lucene.version}</value>
+		</constructor-arg>
+	</bean>
+
+	<bean id="luceneCnAnalyzer"
+		class="org.apache.lucene.analysis.cn.smart.SmartChineseAnalyzer">
+		<constructor-arg>
+			<value type="org.apache.lucene.util.Version">${lucene.version}</value>
+		</constructor-arg>
+	</bean>
+	
+	<bean id="ikAnalyzer" class="org.wltea.analyzer.lucene.IKAnalyzer">
+		
+	</bean>
+
+	<!-- 配置Lucene目录 -->
+	<bean id="luceneDirectory" class="org.apache.lucene.store.SimpleFSDirectory">
+		<constructor-arg>
+			<bean class="java.io.File">
+				<constructor-arg>
+					<value>${lucene.indexdir}</value>
+				</constructor-arg>
+			</bean>
+		</constructor-arg>
+	</bean>
+
+	<!-- 配置LuceneConfig -->
+	<bean id="indexWriterConfig" class="org.apache.lucene.index.IndexWriterConfig"  scope="prototype">
+		<constructor-arg>
+			<value type="org.apache.lucene.util.Version">${lucene.version}</value>
+		</constructor-arg>
+		<constructor-arg>
+			<!-- ref bean = "luceneAnalyzer" / -->
+			<!-- ref bean="luceneCnAnalyzer" / -->
+			<ref bean="ikAnalyzer" />
+		</constructor-arg>
+	</bean>
+
+
+	<!-- 配置lucene所以处理 -->
+	<bean id="indexWriter" class="org.apache.lucene.index.IndexWriter" scope="prototype" >
+		<constructor-arg ref="luceneDirectory" />
+		<constructor-arg ref="indexWriterConfig" />
+	</bean>
+
+	
+
+	<!-- 文件处理类 -->
+	<bean id="fileHandler" class="org.neolm.batools.core.document.TikaFileHandler"  scope="prototype" />
+
+	<!-- 索引文件处理类 -->
+	<bean id="indexFiles" class="org.neolm.batools.core.index.IndexFiles"  scope="prototype" >
+		<property name="indexWriter">
+			<ref bean="indexWriter" />
+		</property>
+	</bean>
+
+	<!-- 检查仓库处理 -->
+	<bean id="inspectRepository" class="org.neolm.batools.core.inspect.InspectRepository" scope="prototype" >
+		<property name="fileHandler">
+			<ref bean="fileHandler" />
+		</property>
+		<property name="repository">
+			<ref bean="repository" />
+		</property>
+		<property name="indexFile">
+			<ref bean="indexFiles" />
+		</property>
+	</bean>
+
+
+</beans>
+ 

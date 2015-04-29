@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:aop="http://www.springframework.org/schema/aop"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+ http://www.springframework.org/schema/beans/spring-beans-4.0.xsd  ">
+ <!-- 配置lucene queryparser -->
+	<bean id="queryParser" class="org.apache.lucene.queryparser.classic.QueryParser">
+		<constructor-arg>
+			<value type="org.apache.lucene.util.Version">${lucene.version}</value>
+		</constructor-arg>
+		<constructor-arg>
+			<value>contents</value>
+		</constructor-arg>
+		<!-- constructor-arg ref="luceneCnAnalyzer" / -->
+		<constructor-arg ref="ikAnalyzer" />
+	</bean>
+	
+	
+	
+	<!-- 配置lucene reader -->
+	<bean id="indexReader" class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		 <property name="targetClass" value="org.apache.lucene.index.DirectoryReader" />
+		 <property name="targetMethod" value="open" />
+		 <property name="arguments">
+		 	<ref bean= "luceneDirectory" />  
+		 </property>
+	</bean>
+	
+	<!-- 配置lucene searcher -->
+	<bean id="indexSearcher" class="org.apache.lucene.search.IndexSearcher">
+		<constructor-arg ref="indexReader" />
+	</bean>
+	
+	<!-- 配置lucene searchFiles -->
+	<bean id="searchFiles" class="org.neolm.batools.core.search.SearchFiles">		
+		<property name="indexSearcher">
+			<ref bean="indexSearcher" />
+		</property>
+		<property name="parser">
+			<ref bean="queryParser" />
+		</property>	
+		<property name="indexReader">
+			<ref bean="indexReader" />
+		</property>	
+		<property name="analyzer">
+			<ref bean="ikAnalyzer" />
+		</property>	
+	</bean >
+ </beans>

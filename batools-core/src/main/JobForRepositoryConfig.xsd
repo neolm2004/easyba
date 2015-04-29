@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- edited with XMLSpy v2011 (http://www.altova.com) by LM (AILK) -->
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<xs:element name="JobForRepositoryConfig">
+		<xs:annotation>
+			<xs:documentation>Comment describing your root element</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element name="JobName" type="xs:string"/>
+				<xs:element name="JobTrigger" type="xs:string"/>
+				<xs:element name="IndexFileFilter">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="IncludeExtension" minOccurs="0">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="Value" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="TargetPaths">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="TargetPath" type="xs:string" minOccurs="0" maxOccurs="unbounded"/>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+				<xs:element name="EntrySvnFileName" type="xs:string"/>
+				<xs:element name="JobParameters">
+					<xs:complexType>
+						<xs:sequence>
+							<xs:element name="Param" minOccurs="0" maxOccurs="unbounded">
+								<xs:complexType>
+									<xs:sequence>
+										<xs:element name="ParamName" type="xs:string"/>
+										<xs:element name="ParamValue" type="xs:string"/>
+									</xs:sequence>
+								</xs:complexType>
+							</xs:element>
+						</xs:sequence>
+					</xs:complexType>
+				</xs:element>
+			</xs:sequence>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

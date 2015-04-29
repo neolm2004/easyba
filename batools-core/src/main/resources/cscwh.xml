@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<JobForRepositoryConfig xsi:noNamespaceSchemaLocation="JobForRepositoryConfig.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<JobName>csc-wh</JobName>
+	<JobTrigger>0 55 * * *  ?</JobTrigger>
+	<IndexFileFilter>
+		<IncludeExtension>
+			<Value>docx</Value>
+			<Value>doc</Value>			
+			<Value>txt</Value>
+			<Value>xls</Value>
+			<Value>xlsx</Value>
+			<Value>ppt</Value>
+			<Value>pptx</Value>
+		</IncludeExtension>
+	</IndexFileFilter>
+	<TargetPaths>	
+	<TargetPath>/04-解决方案/2014年/2014-01/CRM侧设计文档/</TargetPath>
+	</TargetPaths>
+	<EntrySvnFileName>e:\\svntry.txt</EntrySvnFileName>
+	<JobParameters>
+		<Param>
+			<ParamName>loginname</ParamName>
+			<ParamValue>lvming</ParamValue>
+		</Param>
+		<Param>
+			<ParamName>loginpwd</ParamName>
+			<ParamValue>lvming</ParamValue>
+		</Param>
+		<Param>
+			<ParamName>maxDocNum</ParamName>
+			<ParamValue>16407</ParamValue>
+		</Param>
+		</JobParameters>
+</JobForRepositoryConfig>

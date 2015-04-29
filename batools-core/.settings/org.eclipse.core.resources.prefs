@@ -1,0 +1,13 @@
+eclipse.preferences.version=1
+encoding//src/main/java=GBK
+encoding//src/main/java/org/neolm/batools/core/engine/IndexFileBaseMain.java=UTF-8
+encoding//src/main/java/org/neolm/batools/core/inspect/InspectRepository.java=UTF-8
+encoding//src/main/java/org/neolm/batools/core/job/InspectRepositoryJob.java=UTF-8
+encoding//src/main/java/org/neolm/batools/core/repository/Repository.java=UTF-8
+encoding//src/main/java/org/neolm/batools/core/search/SearchFiles.java=UTF-8
+encoding//src/main/java/org/neolm/batools/core/util/DateUtil.java=UTF-8
+encoding//src/main/java/org/neolm/batools/core/util/FileUtil.java=UTF-8
+encoding//src/main/resources=UTF-8
+encoding//src/test/java=GBK
+encoding//src/test/resources=UTF-8
+encoding/<project>=UTF-8
